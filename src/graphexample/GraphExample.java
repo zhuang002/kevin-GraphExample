@@ -23,9 +23,11 @@ public class GraphExample {
         Node[] nodes1 = buildBidirectionalGraph();
         Node[][] nodes2 = buildDirectionalGraph();
         TreeNode root = buildTree();
+        BinaryTreeNode binaryRoot=buildBinaryTree();
 
         Node[] nodes = getAllAchievableNodes1(nodes1[0]);
         Node[] coordNodes = getAllAchievableNodes2(nodes2[0][0]);
+        int depthOfTree=root.getDepth();
 
     }
 
@@ -139,6 +141,9 @@ public class GraphExample {
 
         return root;
 
+    }
+
+    private static BinaryTreeNode buildBinaryTree() {
     }
 
 }
