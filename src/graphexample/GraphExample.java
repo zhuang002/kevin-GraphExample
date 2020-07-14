@@ -144,6 +144,32 @@ public class GraphExample {
     }
 
     private static BinaryTreeNode buildBinaryTree() {
+        BinaryTreeNode[] binarytree = new BinaryTreeNode[11];
+        for (int i = 0; i < 11; i++) {
+            binarytree[i] = new BinaryTreeNode();
+            binarytree[i].setValue(i);
+        }
+        BinaryTreeNode root = binarytree[7];
+        root.setLeft(binarytree[5]);
+        root.setRight(binarytree[8]);
+        
+        binarytree[8].setRight(binarytree[11]);
+        
+        binarytree[5].setLeft(binarytree[1]);
+        binarytree[5].setRight(binarytree[6]);
+
+        binarytree[1].setLeft(binarytree[2]);
+        binarytree[1].setRight(binarytree[0]);
+
+        binarytree[2].setLeft(binarytree[3]);
+        binarytree[2].setRight(binarytree[4]);
+
+        binarytree[0].setRight(binarytree[9]);
+
+
+
+        return root;
+
     }
 
 }
