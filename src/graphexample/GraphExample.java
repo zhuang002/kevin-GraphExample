@@ -5,6 +5,10 @@
  */
 package graphexample;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  *
  * @author zhuan
@@ -16,12 +20,16 @@ public class GraphExample {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        buildBidirectionalGraph();
-        buildDirectionalGraph();
+        Node[] nodes1=buildBidirectionalGraph();
+        Node[][] nodes2=buildDirectionalGraph();
+        TreeNode root=buildTree();
 
+        Node[] nodes=getAllAchievableNodes1(nodes1[0]);
+        Node[] coordNodes=getAllAchievableNodes2(nodes2[0][0]);
+        
     }
 
-    private static void buildBidirectionalGraph() {
+    private static Node[] buildBidirectionalGraph() {
         Node[] nodes = new Node[10];
         for (int i = 0; i < 10; i++) {
             nodes[i] = new BidirectionalNode();
@@ -40,9 +48,10 @@ public class GraphExample {
         nodes[5].addNeighbour(nodes[6]);
 
         nodes[6].addNeighbour(nodes[7]);
+        return nodes;
     }
 
-    private static void buildDirectionalGraph() {
+    private static Node[][] buildDirectionalGraph() {
         Node[][] nodes = new Node[4][4];
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
@@ -69,16 +78,59 @@ public class GraphExample {
 
         nodes[2][0].addNeighbour(nodes[2][1]);
         nodes[2][0].addNeighbour(nodes[3][1]);
-        
+
         nodes[2][2].addNeighbour(nodes[2][3]);
         nodes[2][2].addNeighbour(nodes[3][2]);
-        
+
         nodes[2][3].addNeighbour(nodes[3][3]);
-        
+
         nodes[3][0].addNeighbour(nodes[3][1]);
+
+        nodes[3][1].addNeighbour(nodes[2][1]);
+        nodes[3][2].addNeighbour(nodes[2][2]);
         
-         nodes[3][1].addNeighbour(nodes[2][1]);
-         nodes[3][2].addNeighbour(nodes[2][2]);
+        return nodes;
     }
+
+    private static Node[] getAllAchievableNodes1(Node node) {
+        Set<Node> ret=new HashSet();
+        ret.add(node);
+        ret.addAll(node.getNeighbours());
+        Set<Node> visited=new HashSet();
+        visited.add(node);
+        return getAllAchievableNodes1(ret,visited);
+    }
+
+    private static Node[] getAllAchievableNodes1(Set<Node> currentNodes, Set<Node> visited) {
+        Set<Node> ret=new HashSet();
+        ret.addAll(currentNodes);
+        for (Node n:currentNodes) {
+            if (visited.contains(n)) continue;
+            Node[] achievables=getAllAchievableNodes1(n);
+            ret.addAll(Arrays.asList(achievables));
+        }
+        return (Node[])ret.toArray();
+    }
+
+    private static TreeNode buildTree() {
+        TreeNode[] nodes= new TreeNode[11];
+        for (int i=0;i<11;i++) {
+            nodes[i]=new TreeNode();
+            nodes[i].setValue(i);
+        }
+        TreeNode root = nodes[7];
+        root.addChild(nodes[5]);
+        root.addChild(nodes[8]);
+        
+        nodes[5].addChild(nodes[1]);
+        nodes[5].addChild(nodes[6]);
+        
+        ...
+        
+        return root;
+        
+    }
+    
+    
 
 }
