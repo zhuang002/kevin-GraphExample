@@ -5,9 +5,11 @@
  */
 package graphexample;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Stack;
 
 /**
  *
@@ -25,9 +27,13 @@ public class GraphExample {
         TreeNode root = buildTree();
         BinaryTreeNode binaryRoot=buildBinaryTree();
 
-        Node[] nodes = getAllAchievableNodes1(nodes1[0]);
-        Node[] coordNodes = getAllAchievableNodes2(nodes2[0][0]);
+        Node[] nodes3 = getAllAchievableNodesBFS(nodes1[0]);
+        Node[] nodes4 = getAllAchievableNodesDFS(nodes1[0]);
+        Node[] nodes5 = getAllAchievableNodesDFSRecursive(nodes1[0]);
         int depthOfTree=root.getDepth();
+        
+        Node node1=searchTreeNodeByValueBFS(8);
+        Node node2=searchTreeNodeByValueDFS(8);
 
     }
 
@@ -94,27 +100,30 @@ public class GraphExample {
         return nodes;
     }
 
-    private static Node[] getAllAchievableNodes1(Node node) {
-        Set<Node> ret = new HashSet();
-        ret.add(node);
-        ret.addAll(node.getNeighbours());
-        Set<Node> visited = new HashSet();
-        visited.add(node);
-        return getAllAchievableNodes1(ret, visited);
+    private static Node[] getAllAchievableNodesBFS(Node node) {
+        ArrayList<Node> nodesHaveProcessed=new ArrayList();
+        ArrayList<Node> nodeToProcessCurrentLevel=new ArrayList();
+        ArrayList<Node> nodeToProcessNextLevel=new ArrayList();
+        
+        
+        nodesHaveProcessed.add(node);
+        nodeToProcessCurrentLevel.addAll(node.neighbourNodes);
+        do {
+            for (Node n1:nodeToProcessCurrentLevel) {
+                for (Node n2:n1.neighbourNodes) {
+                    if (!nodesHaveProcessed.contains(n2))
+                        nodeToProcessNextLevel.add(n2);
+                }
+                nodesHaveProcessed.add(n1);
+            }
+            nodeToProcessCurrentLevel=nodeToProcessNextLevel;
+            nodeToProcessNextLevel=new ArrayList();
+        } while (!nodeToProcessCurrentLevel.isEmpty());
+        
+        return (Node[])nodesHaveProcessed.toArray();
     }
 
-    private static Node[] getAllAchievableNodes1(Set<Node> currentNodes, Set<Node> visited) {
-        Set<Node> ret = new HashSet();
-        ret.addAll(currentNodes);
-        for (Node n : currentNodes) {
-            if (visited.contains(n)) {
-                continue;
-            }
-            Node[] achievables = getAllAchievableNodes1(n);
-            ret.addAll(Arrays.asList(achievables));
-        }
-        return (Node[]) ret.toArray();
-    }
+    
 
     private static TreeNode buildTree() {
         TreeNode[] nodes = new TreeNode[11];
@@ -170,6 +179,49 @@ public class GraphExample {
 
         return root;
 
+    }
+
+    private static Node[] getAllAchievableNodesDFS(Node node) {
+        ArrayList<Node> nodesHaveProcessed=new ArrayList();
+        Stack<Node> nodesToProcess=new Stack();
+        
+        Node n=node;
+        
+        while (true) {
+            for (Node n1:n.neighbourNodes) {
+                if (!nodesHaveProcessed.contains(n1)) {
+                    nodesToProcess.push(n1);
+                }
+            }
+            nodesHaveProcessed.add(n);
+            if (nodesToProcess.isEmpty()) break;
+            n=nodesToProcess.pop();
+        } 
+        return (Node[])nodesHaveProcessed.toArray();
+    }
+
+    private static Node[] getAllAchievableNodesDFSRecursive(Node node) {
+        ArrayList<Node> nodesHaveProcessed=new ArrayList();
+        return getAllAchievableNodesDFSRecursive(node, nodesHaveProcessed);
+    }
+
+    private static Node[] getAllAchievableNodesDFSRecursive(Node node, ArrayList<Node> nodesHaveProcessed) {
+        ArrayList<Node> ret=new ArrayList();
+        for (Node n:node.neighbourNodes) {
+            if (!nodesHaveProcessed.contains(n)) {
+                ret.addAll(Arrays.asList(getAllAchievableNodesDFSRecursive(n)));
+            }
+        }
+        nodesHaveProcessed.add(node);
+        return (Node[])ret.toArray();
+    }
+
+    private static Node searchTreeNodeByValueBFS(Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    private static Node searchTreeNodeByValueDFS(Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }
