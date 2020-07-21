@@ -59,5 +59,14 @@ public class TreeNode {
         }
         return maxSubDepth+1;
     }
+
+    TreeNode seachNodeByValue(Object o) {
+        if (this.value.equals(o)) return this;
+        for (TreeNode n:this.children) {
+            TreeNode ret=n.seachNodeByValue(o);
+            if (ret!=null) return ret;
+        }
+        return null;
+    }
     
 }

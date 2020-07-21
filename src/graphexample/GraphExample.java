@@ -27,13 +27,14 @@ public class GraphExample {
         TreeNode root = buildTree();
         BinaryTreeNode binaryRoot=buildBinaryTree();
 
-        Node[] nodes3 = getAllAchievableNodesBFS(nodes1[0]);
-        Node[] nodes4 = getAllAchievableNodesDFS(nodes1[0]);
-        Node[] nodes5 = getAllAchievableNodesDFSRecursive(nodes1[0]);
+        ArrayList<Node> nodes3 = getAllAchievableNodesBFS(nodes1[0]);
+        ArrayList<Node> nodes4 = getAllAchievableNodesDFS(nodes1[0]);
+        ArrayList<Node> nodes5 = getAllAchievableNodesDFSRecursive(nodes1[0]);
         int depthOfTree=root.getDepth();
         
-        Node node1=searchTreeNodeByValueBFS(8);
-        Node node2=searchTreeNodeByValueDFS(8);
+        TreeNode treenode1=searchTreeNodeByValueBFS(root,8);
+        TreeNode treenode2=searchTreeNodeByValueDFS(root,8);
+        TreeNode treenode3=root.seachNodeByValue(8); //recursive (DFS)
 
     }
 
@@ -100,7 +101,7 @@ public class GraphExample {
         return nodes;
     }
 
-    private static Node[] getAllAchievableNodesBFS(Node node) {
+    private static ArrayList<Node> getAllAchievableNodesBFS(Node node) {
         ArrayList<Node> nodesHaveProcessed=new ArrayList();
         ArrayList<Node> nodeToProcessCurrentLevel=new ArrayList();
         ArrayList<Node> nodeToProcessNextLevel=new ArrayList();
@@ -120,7 +121,7 @@ public class GraphExample {
             nodeToProcessNextLevel=new ArrayList();
         } while (!nodeToProcessCurrentLevel.isEmpty());
         
-        return (Node[])nodesHaveProcessed.toArray();
+        return nodesHaveProcessed;
     }
 
     
@@ -162,7 +163,7 @@ public class GraphExample {
         root.setLeft(binarytree[5]);
         root.setRight(binarytree[8]);
         
-        binarytree[8].setRight(binarytree[11]);
+        binarytree[8].setRight(binarytree[10]);
         
         binarytree[5].setLeft(binarytree[1]);
         binarytree[5].setRight(binarytree[6]);
@@ -181,7 +182,7 @@ public class GraphExample {
 
     }
 
-    private static Node[] getAllAchievableNodesDFS(Node node) {
+    private static ArrayList<Node> getAllAchievableNodesDFS(Node node) {
         ArrayList<Node> nodesHaveProcessed=new ArrayList();
         Stack<Node> nodesToProcess=new Stack();
         
@@ -197,31 +198,52 @@ public class GraphExample {
             if (nodesToProcess.isEmpty()) break;
             n=nodesToProcess.pop();
         } 
-        return (Node[])nodesHaveProcessed.toArray();
+        return nodesHaveProcessed;
     }
 
-    private static Node[] getAllAchievableNodesDFSRecursive(Node node) {
+    private static ArrayList<Node> getAllAchievableNodesDFSRecursive(Node node) {
         ArrayList<Node> nodesHaveProcessed=new ArrayList();
         return getAllAchievableNodesDFSRecursive(node, nodesHaveProcessed);
     }
 
-    private static Node[] getAllAchievableNodesDFSRecursive(Node node, ArrayList<Node> nodesHaveProcessed) {
+    private static ArrayList<Node> getAllAchievableNodesDFSRecursive(Node node, ArrayList<Node> nodesHaveProcessed) {
         ArrayList<Node> ret=new ArrayList();
         for (Node n:node.neighbourNodes) {
             if (!nodesHaveProcessed.contains(n)) {
-                ret.addAll(Arrays.asList(getAllAchievableNodesDFSRecursive(n)));
+                nodesHaveProcessed.add(n);
+                ret.addAll(getAllAchievableNodesDFSRecursive(n,nodesHaveProcessed));
             }
         }
         nodesHaveProcessed.add(node);
-        return (Node[])ret.toArray();
+        return ret;
     }
 
-    private static Node searchTreeNodeByValueBFS(Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private static TreeNode searchTreeNodeByValueBFS(TreeNode root,Object o) {
+        ArrayList<TreeNode> currentProcessingNodes=new ArrayList<TreeNode>();
+        ArrayList<TreeNode> nextProcessingNodes=new ArrayList<TreeNode>();
+        currentProcessingNodes.add(root);
+        while (!currentProcessingNodes.isEmpty()) {
+            for (TreeNode n:currentProcessingNodes) {
+                if (n.getValue().equals(o)) return n;
+                nextProcessingNodes.addAll(n.getChildren());
+            }
+            currentProcessingNodes=nextProcessingNodes;
+            nextProcessingNodes=new ArrayList<TreeNode>();
+        }
+        return null;
     }
     
-    private static Node searchTreeNodeByValueDFS(Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private static TreeNode searchTreeNodeByValueDFS(TreeNode root, Object o) {
+        
+        Stack<TreeNode> nodes=new Stack<>();
+        nodes.add(root);
+        
+        while (!nodes.isEmpty()) {
+            TreeNode n=nodes.pop();
+            if (n.getValue().equals(o)) return n;
+            nodes.addAll(n.getChildren());
+        }
+        return null;
     }
 
 }

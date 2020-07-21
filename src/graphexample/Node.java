@@ -32,6 +32,6 @@ public abstract class Node {
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Node)) return false;
-        return this.value.equals(o);
+        return this.value.equals(((Node)o).getValue());
     }
 }
